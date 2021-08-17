@@ -1,0 +1,92 @@
+<html>
+<!-- The add page in the client, creates new student in database -->
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    
+    <!-- load fonts from Google -->
+    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker:400' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,700" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400italic' rel='stylesheet' type='text/css'>
+    
+    <!-- External CSS-->
+    <link rel="stylesheet" href="stylesheets.css">
+
+    <title>Add Student</title>
+</head>
+
+<body>
+        <!-- Titles -->
+        <div class="gtd">
+            <h1 class="gtd-r1">Add</h1>
+            <h1 class="gtd-r2">New Student</h1>
+          </div><br><br><br>
+
+        <!-- form element -->
+        <form class="centerBtn">
+            <strong class="fontTitles">Name:</strong> <input type="text" id="name" class="form-control"><br>
+            <strong class="fontTitles">Email:</strong> <input type="text" id="email" class="form-control"><br>
+            <strong class="fontTitles">Faculty:</strong><input type="text" id="faculty" class="form-control"><br>
+            <strong class="fontTitles">Birthday Date:</strong><input type="date" id="birth" class="form-control" style="text-align: left;"><br>
+
+            <input type="button" value="Add" onclick="addStudent()" class="btn btn-dark">
+        </form><br><br>
+
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                  <div class="d-block w-100 eb-lora centerBtn" style="height: 100px; background-color: f8eaec;">
+                    <q class="eb-lora-p">This is a new year. A new beginning. And things will change. </q>
+                    <figcaption>-Taylor Swift</figcaption>
+                  </div>
+              </div>
+              <!-- for style only -->
+              <div class="carousel-item">
+                <div class="d-block w-100 eb-lora centerBtn" style="height: 100px; background-color: e8d6cb;">
+                    <q class="eb-lora-p">Success is the sum of small efforts, repeated day in and day out.</q>
+                    <figcaption>-Robert Collier</figcaption>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer style="margin-top: -10%;">
+            <div class="centerBtn">
+                <img src="footerGrades.png" alt="somePic">
+            </div>
+            ©Linor Cohen
+        </footer>
+
+    <script>
+
+        /* creates new student in database with POST verb */
+        var addStudent = async()=>{
+            var newStudent = {
+                fullName: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                faculty: document.getElementById('faculty').value,
+                birthDate: document.getElementById('birth').value
+            }
+            var fetchParams = {
+                method: "post",
+                body: JSON.stringify(newStudent),
+                headers:{"content-type":"application/json"}
+            }
+            var resp = await fetch("http://localhost:8000/students", fetchParams)
+            if(resp.ok){
+                var answer = await resp.json()
+                alert(answer)
+                // returns to the main page
+                window.location.href="mainPage.html"
+            }
+        }
+
+    </script>
+    <!-- JavaScript: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>

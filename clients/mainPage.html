@@ -1,0 +1,182 @@
+<html>
+    <!-- The main page in the client, shows all the students in table element -->
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        
+        <!-- Load fonts from Google -->
+        <link href='https://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Lora:400italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Montserrat:400' rel='stylesheet' type='text/css'>
+
+        <!-- External CSS-->
+        <link rel="stylesheet" href="stylesheets.css">
+
+        <title>Students</title>
+    </head>
+    <body onload="getData()">
+        <!-- Titles -->
+        <div class="nf">
+            <h2 class="nf-r1">Welcome To</h2>
+            <h1 class="nf-r2">Students Data</h1>
+        </div><br><br>
+        <span class="fontUser" id="userMsg"></span>
+        <a href="loginPage.html" class="logout">Log Out</a>
+        <!-- Style alret box -->
+        <div id="alretId" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+            <strong>Yay! The student was deleted</strong>
+        </div>
+        <!-- Build table of students -->
+        <div class="table-responsive-md">
+            <table id="studentsTbl" border="1" class="table table-bordered table-dark">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Faculty</th>
+                    <th>Grades</th>
+                    <th colspan="2">Buttons</th>
+                </tr>
+            </table><br>
+        </div>
+        <!-- for style only -->
+        <input type="button" value="Add" onclick="addStudent()" class="btn btn-dark btn-lg centerBtn"><br><br>
+        <hr size="1" width="50%" color="black">  <br><br>
+        <div class="eb-lora" style="height: 100px;">
+            <q class="eb-lora-p">Success is not final; failure is not fatal: It is the courage to continue that counts.</q>
+            <figcaption>-Winston S. Churchill</figcaption>
+        </div>
+        <footer style="margin-top: -10%;">
+            <div class="centerBtn">
+                <img src="footerGrades.png" alt="somePic">
+            </div>
+            ©Linor Cohen
+        </footer>
+
+    <script>
+        /* prints all the students data in table */
+        var getData = async()=>{
+            var tblObj = document.getElementById('studentsTbl')
+            var userName = sessionStorage.getItem('username')
+            document.getElementById('userMsg').innerHTML = `Hello ${userName},`
+            var resp = await fetch("http://localhost:8000/students")
+            if(resp.ok){
+                var students = await resp.json()
+                students.forEach(student=>{
+                    var rowObj = document.createElement('tr')
+                    var nameCell = document.createElement('td')
+                    var facuCell = document.createElement('td')
+                    var gradesCell = document.createElement('td')
+                    var editCell = document.createElement('td')
+                    var deleteCell = document.createElement('td')
+
+                    nameCell.className = "tdMain"
+                    facuCell.className = "tdMain"
+                    gradesCell.className = "tdMain"
+                    editCell.className = "tdMain"
+                    deleteCell.className = "tdMain"
+
+                    var nameLink = document.createElement('a')
+                    nameLink.innerHTML = student.fullName
+                    nameLink.onclick = ()=>{
+                        getStudentData(student._id)
+                    }
+                    nameLink.href = "studentPage.html"
+
+                    facuCell.innerHTML = student.faculty
+                    
+                    var gradesLink = document.createElement('a')
+                    gradesLink.innerHTML = "Grades"
+                    gradesLink.onclick = ()=>{
+                        getStudentGrades(student._id)
+                    }
+                    gradesLink.href = "gradesPage.html"
+
+                    var editButton = document.createElement('input')
+                    editButton.type = "button"
+                    editButton.value = "Edit"
+                    editButton.className = "btn btn-outline-light btnTable"
+                    editButton.onclick = ()=>{
+                        editStudent(student._id)
+                    }
+
+                    var deleteButton = document.createElement('input')
+                    deleteButton.type = "button"
+                    deleteButton.value = "Delete"
+                    deleteButton.className = "btn btn-outline-light btnTable"
+                    deleteButton.onclick = ()=>{
+                        deleteStudent(student._id)
+                    }
+
+                    nameCell.appendChild(nameLink)
+                    gradesCell.appendChild(gradesLink)
+                    editCell.appendChild(editButton)
+                    deleteCell.appendChild(deleteButton)
+
+                    rowObj.appendChild(nameCell)
+                    rowObj.appendChild(facuCell)
+                    rowObj.appendChild(gradesCell)
+                    rowObj.appendChild(editCell)
+                    rowObj.appendChild(deleteCell)
+
+                    tblObj.appendChild(rowObj)
+                })
+            }
+        }
+
+        /* defines function to fullName link */
+        var getStudentData = (id)=>{
+            sessionStorage.setItem('id', id)
+        }
+
+        /* defines function to grades link */
+        var getStudentGrades = (id)=>{
+            sessionStorage.setItem('id', id)
+        }
+
+        /* defines function to edit button */
+        var editStudent = (id)=>{
+            sessionStorage.setItem('id', id)
+            window.location.href = "editPage.html"
+        }
+        /* deletes all the rows in the table except the first row(all the table's headers remain) */
+        var restartTable = ()=>{
+            var tblObj = document.getElementById('studentsTbl')
+            // deletes all the rows in table except the first row
+            for(var i=tblObj.rows.length-1;i>0;i--){
+                tblObj.deleteRow(i)
+            }
+        }
+        /* defines function to delete button */
+        var deleteStudent = async(id)=>{
+            var fetchParams = {
+                method:"delete"
+            }
+            var resp = await fetch(`http://localhost:8000/students/${id}`, fetchParams)
+            if(resp.ok){
+                var answer = await resp.json()
+                //  show alret box after deleting student in database
+                // and prints all the data in the table(by verb GET all)
+                var alretObj = document.getElementById('alretId')
+                alretObj.style.display = "block"
+                restartTable()
+                await getData()
+                setTimeout(()=>{
+                    alretObj.style.display = "none"
+                },1000)
+            }
+        }
+
+        /* defines function to add button */
+        var addStudent = ()=>{
+            window.location.href = "addPage.html"
+        }
+    </script>
+    <!-- JavaScript: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>

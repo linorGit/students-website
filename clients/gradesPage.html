@@ -1,0 +1,275 @@
+<html>
+  <!-- The grades page in the client, edit the grades of exist student in database -->
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+
+    <!-- Load fonts from Google -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Droid+Serif:400"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Droid+Serif:400italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lora:400italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Raleway:300,700"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS-->
+    <link rel="stylesheet" href="stylesheets.css" />
+
+    <title>Grades</title>
+  </head>
+
+  <body onload="getGrades()">
+    <!-- Titles -->
+    <div class="puopu">
+      <h1 class="puopu-r1">
+        <span id="studentName"></span><span class="puopu-small">'s</span> Grades
+      </h1>
+    </div>
+    <br /><br />
+    <!-- Style alret box -->
+    <div
+      id="alretId"
+      class="alert alert-warning alert-dismissible fade show"
+      role="alert"
+      style="display: none"
+    >
+      You didnt choose any grade, <strong>Please try again!</strong>
+    </div>
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col col-sm-2">
+          <input
+            type="button"
+            value="delete"
+            onclick="deleteRow()"
+            class="btn btn-dark rightBtn"
+            title="Doesn't change grades in the database, only in this table"
+          />
+          <input
+            type="button"
+            value="add"
+            onclick="addRow()"
+            class="btn btn-dark rightBtn"
+            title="Doesn't change grades in the database, only in this table"
+          />
+        </div>
+        <div class="col">
+          <!-- grades' table -->
+          <table id="gradesTbl" class="table table-bordered gradeTable">
+            <tr style="background-color: d8e2dc">
+              <th class="fontTitles">For Delete</th>
+              <th class="fontTitles">Exam Date</th>
+              <th class="fontTitles">Grade</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br /><br />
+    <input
+      type="button"
+      value="Update"
+      onclick="updateGardes()"
+      class="btn btn-lg largeBtn updateBtn"
+    /><br /><br /><br />
+    <!-- for style only -->
+    <div
+      class="eb-lora centerBtn"
+      style="width: 100%; background-color: c9e4de"
+    >
+      <q class="eb-lora-p">Failure is success in progress</q>
+      <figcaption>-Albert Einstein</figcaption>
+    </div>
+    <footer style="margin-top: -10%">
+      <div class="centerBtn">
+        <img src="footerGrades.png" alt="somePic" />
+      </div>
+      ©Linor Cohen
+    </footer>
+
+    <script>
+      /* get the student's data from database which the client wants to edit */
+      /* and enters the grades in the table */
+      var getGrades = async () => {
+        var studentId = sessionStorage.getItem("id");
+        var tblObj = document.getElementById("gradesTbl");
+        var resp = await fetch(`http://localhost:8000/students/${studentId}`);
+        if (resp.ok) {
+          var student = await resp.json();
+          // shows the first name of the student in the title
+          var firstName = student.fullName.split(" ")[0];
+          document.getElementById("studentName").innerHTML = firstName + " ";
+          // the student JSON is saved in the session storage because the user doesnt change it in this page
+          // the session storage doesnt save JS JSON object, therefore it convert to JSON object
+          sessionStorage.setItem("studentJson", JSON.stringify(student));
+          student.grades.forEach((item) => {
+            var rowObj = document.createElement("tr");
+            var dateCell = document.createElement("td");
+            var gradeCell = document.createElement("td");
+            var radioCell = document.createElement("td");
+
+            var radioInput = document.createElement("input");
+            radioInput.type = "radio";
+            radioInput.name = "rowIndex";
+
+            var dateInput = document.createElement("input");
+            dateInput.type = "date";
+            // set the date in format yyyy-mm-dd in order to set it to DATE input
+            dateInput.value = new Date(item.dateExam)
+              .toISOString()
+              .slice(0, 10);
+
+            var gradeInput = document.createElement("input");
+            gradeInput.type = "number";
+            gradeInput.min = "0";
+            gradeInput.max = "100";
+            gradeInput.value = item.grade;
+
+            dateInput.className = "inputCenter fontText";
+            gradeInput.className = "inputCenter fontText";
+
+            radioCell.className = "gradesCell";
+            dateCell.className = "gradesCell";
+            gradeCell.className = "gradesCell";
+
+            radioCell.appendChild(radioInput);
+            dateCell.appendChild(dateInput);
+            gradeCell.appendChild(gradeInput);
+
+            rowObj.appendChild(radioCell);
+            rowObj.appendChild(dateCell);
+            rowObj.appendChild(gradeCell);
+
+            tblObj.appendChild(rowObj);
+          });
+        }
+      };
+      /* update the student in the database with PUT verb */
+      var updateGardes = async () => {
+        var studentId = sessionStorage.getItem("id");
+        var gradesArr = [];
+        var tblObj = document.getElementById("gradesTbl");
+        //  index starts from 1 because the row 0 is the headers
+        for (var i = 1; i < tblObj.rows.length; i++) {
+          gradesArr.push({
+            dateExam: new Date(tblObj.rows[i].cells[1].children[0].value),
+            grade: +tblObj.rows[i].cells[2].children[0].value,
+          });
+        }
+        //  get the student JSON from session storage
+        var updateStudent = JSON.parse(sessionStorage.getItem("studentJson"));
+        updateStudent["grades"] = gradesArr;
+
+        var fetchParams = {
+          method: "put",
+          body: JSON.stringify(updateStudent),
+          headers: { "content-type": "application/json" },
+        };
+        var resp = await fetch(
+          `http://localhost:8000/students/${studentId}`,
+          fetchParams
+        );
+        if (resp.ok) {
+          var answer = await resp.json();
+          alert(answer);
+          // release the session storage
+          sessionStorage.removeItem("id");
+          sessionStorage.removeItem("studentJson");
+          // returns to the main page
+          window.location.href = "mainPage.html";
+        }
+      };
+      /* adds new row in the dable in order to allows the client add data to it */
+      var addRow = () => {
+        var tblObj = document.getElementById("gradesTbl");
+
+        var rowObj = document.createElement("tr");
+        var dateCell = document.createElement("td");
+        var gradeCell = document.createElement("td");
+        var radioCell = document.createElement("td");
+
+        var radioInput = document.createElement("input");
+        radioInput.type = "radio";
+        radioInput.name = "rowIndex";
+
+        var dateInput = document.createElement("input");
+        dateInput.type = "date";
+
+        var gradeInput = document.createElement("input");
+        gradeInput.type = "number";
+        gradeInput.min = "0";
+        gradeInput.max = "100";
+
+        dateInput.className = "inputCenter fontText";
+        gradeInput.className = "inputCenter fontText";
+
+        radioCell.appendChild(radioInput);
+        dateCell.appendChild(dateInput);
+        gradeCell.appendChild(gradeInput);
+
+        rowObj.appendChild(radioCell);
+        rowObj.appendChild(dateCell);
+        rowObj.appendChild(gradeCell);
+
+        tblObj.appendChild(rowObj);
+      };
+      /* deletes the row which was chosen by the client */
+      var deleteRow = () => {
+        var radioObjs = document.getElementsByName("rowIndex");
+        var checkedObj = [];
+        // checks which radio button is checked
+        for (var i = 0; i < radioObjs.length; i++) {
+          if (radioObjs[i].checked) {
+            checkedObj.push(radioObjs[i]);
+            break;
+          }
+        }
+        // checks if the client chose any row
+        if (checkedObj.length > 0) {
+          document.getElementById("alretId").style.display = "none";
+          var tblObj = document.getElementById("gradesTbl");
+          var rowIndex = checkedObj[0].parentElement.parentElement.rowIndex;
+          tblObj.deleteRow(rowIndex);
+        } else {
+          document.getElementById("alretId").style.display = "block";
+        }
+      };
+    </script>
+    <!-- JavaScript: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

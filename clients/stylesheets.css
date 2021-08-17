@@ -1,0 +1,288 @@
+/* defines css external file for all the client's pages */
+.nf {
+    color: #000;
+    text-align: center;
+    background-color: #d8e2dc;
+    font-family: Raleway, sans-serif;
+    line-height: 3em;
+  }
+  
+  .nf-r1 {
+    font-size: 1.5em;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 1.2em;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2%;
+  }
+  
+  .nf-r1::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 20%;
+    bottom: -0.5em;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    background-color: #000;
+  }
+  
+  .nf-r2 {
+    font-family: Lora, serif;
+    font-size: 6em;
+    line-height: 1em;
+    font-weight: 300;
+    font-style: italic;
+  }
+  table{
+      text-align: center;
+  }
+  th{
+      font-size: larger;
+      font-family: Raleway, sans-serif;
+  }
+  .tdMain{
+      font-size: large;
+      font-weight: bold;
+      background-color: #b5c99a;
+  }
+  .btnTable{
+      width: 80%;
+      font-weight: bold;
+  }
+  footer{
+    padding: 10%;
+    text-align: center;
+  }
+  .eb-lora {
+    height: 12%;
+    color: #000;
+    background-color: #e2e2df;
+    font-family: Lora, sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 3em;
+    text-align: center;
+  }
+  
+  .eb-lora-p {
+    font-size: 17px;
+    font-size: 1.7em;
+    max-width: 570px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2em;
+    line-height: 1.9em;
+  
+  }
+  figcaption, .centerText{
+    text-align: center;
+}
+.centerBtn{
+   display: table;
+   margin: 0 auto;
+   width: 10%
+}
+a:link, a:visited{
+    color: black;
+    text-decoration-line: underline;
+}
+a:hover{
+    color: white;
+}
+.centerCard {
+    margin: auto;
+    width: 35%;
+    height: 100%;
+    padding-bottom: 15px;
+        }
+.cardImg{
+    background-image: url(studentImg.jpg);
+    height: 50%;
+    text-align: center;
+}
+.cardTitle{
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.fontTitles{
+    font-size: x-large;
+    font-family: 'Cormorant Garamond', serif;
+}
+.fontText{
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+}
+.btnSmall{
+    width: 10%;
+}
+
+.puopu {
+  color: #fff;
+  font-family: Droid Serif, sans-serif;
+  text-align: center;
+  background-image: url(grades.jpg);
+  background-color: #d0d8db;
+  background-size: cover;
+  padding-top: 5%;
+  padding-bottom: 3%;
+}
+
+.puopu-r1 {
+  font-size: 6.5em;
+  font-weight: 400;
+  line-height: 1.1em;
+  text-transform: uppercase;
+}
+
+.puopu-small {
+  height: 2em;
+  width: 2em;
+  font-size: 0.25em;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.9em;
+  text-transform: lowercase;
+  display: inline-block;
+  vertical-align: middle;
+  margin: -0.44em 0.1em 0;
+  border: 0.1em solid #fff;
+}
+.gradeTable{
+    width: 80%;
+    margin-left: 0;
+    float: left;
+
+}
+.gradesCell{
+  width: 10%;
+}
+.inputCenter{
+    text-align: center;
+    width: 60%;
+}
+.rightBtn{
+    margin: 0;
+    position: relative;
+    top: 100%;
+}
+.largeBtn{
+    width: 10%;
+    margin-left: 45%;
+}
+
+.gtd {
+    color: #fff;
+    text-align: center;
+    background-image: url(edit.jpg);
+    background-size: cover;
+    background-color: #d2bd9c;
+    font-family: Permanent Marker, sans-serif;
+    text-transform: uppercase;
+    line-height: 3em;
+    padding-top: 5%;
+    padding-bottom: 3%;
+  }
+  
+  .gtd-r1 {
+    font-size: 3em;
+    line-height: 1em;
+  }
+  
+  .gtd-r2 {
+    font-size: 6em;
+    line-height: 1.1em;
+  }
+  .gradeCell{
+    width: 10%;
+  }
+
+  .asog {
+    color: #fff;
+    text-align: center;
+    background-image: url(loginPage.jpg);
+    background-size: cover;
+    background-color: #f0ae93;
+    font-family: PT Sans, sans-serif;
+    padding-top: 2%;
+  }
+
+  .asog-r2 {
+    font-family: Lora, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 2.7em;
+    display: inline-block;
+    position: relative;
+    mix-blend-mode: overlay;
+  }
+  
+  .asog-r2:before,
+  .asog-r2:after {
+    background: url(leaves.svg) no-repeat center center/2.5em 0.7em;
+    content: "";
+    left: -3em;
+    top: -0.3em;
+    position: absolute;
+    width: 2.5em;
+    height: 1.5em;
+  }
+  
+  .asog-r2:after {
+    left: auto;
+    right: -3em;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+  }
+
+  .ml1 {
+    text-transform: uppercase;
+    font-size: 13em;
+    font-weight: 700;
+    line-height: 1.1em;
+  }
+  
+  .ml1 .letter {
+    display: inline-block;
+    line-height: 1em;
+  }
+  
+  .ml1 .text-wrapper {
+    position: relative;
+    display: inline-block;
+    padding-top: 0.1em;
+    padding-right: 0.05em;
+    padding-bottom: 0.15em;
+  }
+.fontUser{
+  font-size: 2em;
+  font-weight: 400;
+  line-height: 2em;
+  font-style: italic;
+  font-family: Montserrat, sans-serif;
+  display: inline-block;
+  position: relative;
+}
+
+.updateBtn{
+  background-color: black;
+  color: white;
+}
+.updateBtn:hover{
+  background-color: ad6a6c;
+  color: white;
+}
+.logout{
+  font-size: large;
+  font-weight: bold;
+}
+.logout:hover{
+  color: 218380;
+}
+
+  
+  

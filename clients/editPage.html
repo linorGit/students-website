@@ -1,0 +1,115 @@
+<html>
+    <!-- The edit page in the client, edit exist student in database -->
+    <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    
+    <!-- Load fonts from Google -->
+    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker:400' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,700" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400italic' rel='stylesheet' type='text/css'>
+
+    <!-- External CSS-->
+    <link rel="stylesheet" href="stylesheets.css">
+
+    <title>Edit</title>
+    </head>
+
+    <body onload="getStudent()">
+        <!-- Titles -->
+        <div class="gtd">
+            <h1 class="gtd-r1">Edit</h1>
+            <h1 class="gtd-r2" id="studentName"></h1>
+          </div><br><br><br>
+
+        <!-- form element -->
+        <form class="centerBtn">
+            <strong class="fontTitles">Name:</strong> <input type="text" id="name" class="form-control"><br>
+            <strong class="fontTitles">Email:</strong> <input type="text" id="email" class="form-control"><br>
+            <strong class="fontTitles">Faculty:</strong><input type="text" id="faculty" class="form-control"><br>
+            <strong class="fontTitles">Birthday Date:</strong><input type="date" id="birth" class="form-control" style="text-align: left;"><br>
+
+            <input type="button" value="update" onclick="updateStudent()" class="btn btn-dark">
+        </form><br><br>
+
+        <!-- for style only -->
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                  <div class="d-block w-100 eb-lora centerBtn" style="height: 100px; background-color: eaf4f4;">
+                    <q class="eb-lora-p">Learning is a treasure that will follow its owner everywhere. </q>
+                    <figcaption>-Chinese Proverb</figcaption>
+                  </div>
+              </div>
+              <div class="carousel-item">
+                <div class="d-block w-100 eb-lora centerBtn" style="height: 100px; background-color: d8e2dc;">
+                    <q class="eb-lora-p">School is a building which has four walls with tomorrow inside. </q>
+                    <figcaption>-Lon Watters</figcaption>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer style="margin-top: -10%;">
+            <div class="centerBtn">
+                <img src="footerGrades.png" alt="somePic">
+            </div>
+            ©Linor Cohen
+        </footer>
+
+    <script>
+        /* get the student's data from database which the client wants to edit */
+        /* and enters the data in the inputs' fields */
+        var getStudent = async()=>{
+            var studentId = sessionStorage.getItem('id')
+            var resp = await fetch(`http://localhost:8000/students/${studentId}`)
+            if(resp.ok){
+                var student = await resp.json()
+                document.getElementById('studentName').innerHTML = `${student.fullName.split(' ')[0]}'s Data`
+                // the array of grades is saved in the session storage because the user doesnt change it in this page
+                // the session storage doesnt save JS JSON object, therefore it convert to JSON object
+                sessionStorage.setItem('grades', JSON.stringify(student.grades))
+                document.getElementById('name').value = student.fullName
+                document.getElementById('email').value = student.email
+                document.getElementById('faculty').value = student.faculty
+                // resp.json returns a string and not Date object
+                document.getElementById('birth').value= new Date(student.birthDate).toISOString().slice(0,10)
+            }
+        }
+        /* update the student's data in the database with the PUT verb */
+        var updateStudent = async() => {
+            var studentId = sessionStorage.getItem('id')
+            var updateStudent = {
+                fullName: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                faculty: document.getElementById('faculty').value,
+                birthDate: document.getElementById('birth').value,
+                grades: JSON.parse(sessionStorage.getItem('grades'))
+            }
+            var fetchParams = {
+                method: "put",
+                body: JSON.stringify(updateStudent),
+                headers:{"content-type":"application/json"}
+            }
+            var resp = await fetch(`http://localhost:8000/students/${studentId}`, fetchParams)
+            if(resp.ok){
+                var answer = await resp.json()
+                alert(answer)
+                // release session storage
+                sessionStorage.removeItem('id')
+                sessionStorage.removeItem('grades')
+                // returns to the main page
+                window.location.href="mainPage.html"
+            }
+        }
+
+
+    </script>
+     <!-- JavaScript: jQuery and Bootstrap Bundle (includes Popper) -->
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+     </body>
+</html>

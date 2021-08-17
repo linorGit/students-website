@@ -1,0 +1,96 @@
+<html>
+<!-- The student page in the client, show the student's data which the client choose -->
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <!-- Load Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Load fonts from Google -->
+        <link href='https://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Lora:400italic' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Raleway:300,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond:400" rel="stylesheet">
+        
+        <!-- External CSS-->
+        <link rel="stylesheet" href="stylesheets.css">
+        
+        <title>Student</title>
+    </head>
+
+    <body onload="getStudent()">
+        <!-- shows the student's data in card element -->
+        <div class="card mb-3 centerCard">
+            <!-- titles -->
+            <div class="cardImg card-img-top">
+                <div class="cardTitle">
+                    <h2 class="nf-r1">Student</h2>
+                    <h1 id="studentName" class="nf-r2"></h1>
+                </div>
+            </div>
+            <div class="card-body-sm">
+                <strong class="fontTitles">Email: </strong>&nbsp;<span id="email" class="fontText"></span><br>
+                <strong class="fontTitles">Faculty:</strong>&nbsp;<span id="faculty" class="fontText"></span><br>
+                <strong class="fontTitles">Birthday Date:</strong>&nbsp;<span id="birth" class="fontText"></span><br>
+                <strong class="fontTitles">Grades:</strong><br>
+                <div id="divBody"></div><br>
+                <button onclick="returnToMain()" class="btn btn-outline-info btnSmall centerBtn"><i class="fa fa-arrow-left"></i></button>
+            </div>
+        </div>
+        <footer>
+            <div class="centerBtn">
+                <img src="footerGrades.png" alt="somePic">
+            </div>
+            ©Linor Cohen
+        </footer>
+    <script>
+        /* get the student's data from database which the client wants to see */
+        var getStudent = async()=>{
+            var studentId = sessionStorage.getItem('id')
+            var resp = await fetch(`http://localhost:8000/students/${studentId}`)
+            if(resp.ok){
+                var student = await resp.json()
+                document.getElementById('studentName').innerHTML = student.fullName
+                document.getElementById('email').innerHTML = student.email
+                document.getElementById('faculty').innerHTML = student.faculty
+                // resp.json returns a string and not Date object
+                document.getElementById('birth').innerHTML = new Date(student.birthDate).toISOString().slice(0,10)
+                var divBody = document.getElementById('divBody')
+                // shows the grades in ul element
+                student.grades.forEach(item=>{
+                    var listObj = document.createElement('ul')
+                    listObj.className = "list-group list-group-horizontal centerText"
+                    var itemObj1 = document.createElement('li')
+                    var itemObj2 = document.createElement('li')
+
+                    var dateExam = new Date(item.dateExam)
+                    itemObj1.className = "list-group-item flex-fill fontText gradeCell"
+                    itemObj1.innerHTML = dateExam.toISOString().slice(0,10)
+
+                    itemObj2.className = "list-group-item flex-fill fontText gradeCell"
+                    itemObj2.innerHTML = item.grade
+
+                    listObj.appendChild(itemObj1)
+                    listObj.appendChild(itemObj2)
+                    divBody.appendChild(listObj)
+                })
+
+            }
+        }
+
+        /* defines the return(<--) button */
+        var returnToMain = ()=>{
+            // release session storage
+            sessionStorage.removeItem('id')
+            window.location.href = "mainPage.html"
+        }
+    </script>
+
+    <!-- JavaScript: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
